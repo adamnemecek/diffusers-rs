@@ -28,7 +28,7 @@ impl Measurement for Lattice2d {
     /// method returns sum of spins in lattice
     /// ∑ s_i
     fn get_spin_sum(&self) -> i32 {
-        self.nodes.iter().fold(0, |acc, &x| acc + x)
+        self.nodes.iter().sum()
     }
 
     /// method returns mean spin of lattice

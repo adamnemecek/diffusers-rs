@@ -80,7 +80,8 @@ impl Graph {
         let edges = match edge_type {
             EdgeType::BinaryRandom { prob } => {
                 // Probabilistically fill the edge matrix with ones with prob p, and zeros with prob 1-p
-                Ar1ray2::from_shape_fn([n_sites as usize , n_sites as usize], |_| -> f64 {if rng.gen::<f64>() < prob {1.0} else {0.0}}) // *[0.0,1.0].choose(&mut rng, prob).unwrap());
+                Array2::from_shape_fn([n_sites as usize , n_sites as usize], |_| -> f64 {
+                    if rng.gen::<f64>() < prob {1.0} else {0.0}}) // *[0.0,1.0].choose(&mut rng, prob).unwrap());
             }
             _ => {
                 panic!("Not yet implemented edge type, try EdgeType::BinaryRandom instead")
