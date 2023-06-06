@@ -1,9 +1,9 @@
-//! The MonteCarlo type samples quantities on networks that are 
-//! estimated over multiple runs, (such as the expected value of the 
-//! magnetization squared) 
+//! The MonteCarlo type samples quantities on networks that are
+//! estimated over multiple runs, (such as the expected value of the
+//! magnetization squared)
 
 use crate::lattice2d::*;
-use crate::measurement::Measurement; 
+use crate::measurement::Measurement;
 use std::thread;
 
 /// Parameters for monte carlo sampling
@@ -21,7 +21,8 @@ pub trait MonteCarlo {
     /// - Avg Magnetic Susceptibility
     fn sample_energy_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
     fn sample_energy(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
-    fn sample_neighbor_correlations_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
+    fn sample_neighbor_correlations_parallel(&mut self, params: &MonteCarloParams)
+        -> Vec<Vec<f64>>;
     fn sample_neighbor_correlations(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
     fn sample_magnetization_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
     fn sample_magnetization(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>>;
@@ -60,7 +61,7 @@ impl MonteCarlo for Lattice2d {
     //     // Return avg magnetization, fluctuations, uncertainty
     // }
     /// Monte Carlo sample of energy
-    /// Returns a vec of energy samples, of length 
+    /// Returns a vec of energy samples, of length
     /// params.n_runs * params.samples_per_run
     fn sample_energy(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
         let mut energy = vec![vec![0.0; params.samples_per_run]; params.n_runs];
@@ -78,7 +79,7 @@ impl MonteCarlo for Lattice2d {
     }
 
     /// Monte Carlo sample of energy in parallel
-    /// Returns a vec of energy samples, of length 
+    /// Returns a vec of energy samples, of length
     /// params.n_runs * params.samples_per_run
     fn sample_energy_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
         // let mut energy = vec![vec![0.0; params.samples_per_run]; params.n_runs]; // all samples
@@ -110,13 +111,11 @@ impl MonteCarlo for Lattice2d {
         return energy;
     }
 
-
-
     /// Monte Carlo estimate of nearest neighbor correlations
     /// Returns a vec of mean samples, of length params.n_runs
     fn sample_neighbor_correlations(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
         // initiate nearest-neigbour correlation vector (empty Vec)
-        let mut nn_corr = vec![vec![0.0; params.samples_per_run]; params.n_runs]; 
+        let mut nn_corr = vec![vec![0.0; params.samples_per_run]; params.n_runs];
         for i in 0..params.n_runs {
             self.reset_spins();
             // Time evolve the system to cool (or heat) it
@@ -133,7 +132,10 @@ impl MonteCarlo for Lattice2d {
 
     /// Monte Carlo estimate of nearest neighbor correlations
     /// Returns a vec of mean samples, of length params.n_runs
-    fn sample_neighbor_correlations_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
+    fn sample_neighbor_correlations_parallel(
+        &mut self,
+        params: &MonteCarloParams,
+    ) -> Vec<Vec<f64>> {
         // initiate nearest neighbour correlation vector (empty Vec)
         let mut nn_corr = vec![];
         let mut fetch_handle = vec![];
@@ -150,7 +152,11 @@ impl MonteCarlo for Lattice2d {
                 for _ in 0..samples_per_run {
                     // Time evolve the system a bit
                     lattice_copy.update_n(flips_to_skip_between_samples);
-                    nn_samples.push(lattice_copy.get_dot_spin_neighbours() as f64 / lattice_copy.n_sites as f64 / 4.0);
+                    nn_samples.push(
+                        lattice_copy.get_dot_spin_neighbours() as f64
+                            / lattice_copy.n_sites as f64
+                            / 4.0,
+                    );
                 }
                 nn_samples
             }));
@@ -160,7 +166,6 @@ impl MonteCarlo for Lattice2d {
         }
         return nn_corr;
     }
-
 
     fn sample_magnetization_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
         let mut fetch_handle = vec![];
@@ -177,7 +182,11 @@ impl MonteCarlo for Lattice2d {
                 for _ in 0..samples_per_run {
                     // Time evolve the system a bit
                     lattice_copy.update_n(flips_to_skip_between_samples);
-                    mag_samples.push(lattice_copy.get_dot_spin_neighbours() as f64 / lattice_copy.n_sites as f64 / 4.0);
+                    mag_samples.push(
+                        lattice_copy.get_dot_spin_neighbours() as f64
+                            / lattice_copy.n_sites as f64
+                            / 4.0,
+                    );
                 }
                 mag_samples
             }));
@@ -206,7 +215,6 @@ impl MonteCarlo for Lattice2d {
         }
         mag_samples
     }
-
 
     // TODO: implement the following
     // (doc) Monte Carlo estimation for spacial correlations after system is settled
@@ -262,7 +270,7 @@ mod test {
         };
         let beta: f64 = 2.4;
         let mut lattice = Lattice2d::new(
-            [9,9],
+            [9, 9],
             UpdateRule::Metropolis,
             SpinType::SpinHalf,
             InitType::Random,
@@ -309,7 +317,7 @@ mod test {
         };
         let beta: f64 = 2.4;
         let mut lattice = Lattice2d::new(
-            [9,9],
+            [9, 9],
             UpdateRule::Metropolis,
             SpinType::SpinHalf,
             InitType::Random,
@@ -322,7 +330,6 @@ mod test {
         assert_eq!(nn_corr[0].len(), params.samples_per_run);
     }
 }
-
 
 // DISCUSSION
 // Thought: For temporal correlations, the metric to measure this would be
@@ -366,5 +373,3 @@ mod test {
 // Should the correlations accuracy of correlations in time be handled by the user?
 // Or should it be automatic. I think giving the user too much optionality
 // might make this tool confusing to use...
-
-

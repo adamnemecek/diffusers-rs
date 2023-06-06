@@ -1,7 +1,7 @@
 //! The 2D Spin Lattice Type. This is the first (and, so far, the only)
-//! type of network (/graph) on which Monte-Carlo sampling can be done. 
+//! type of network (/graph) on which Monte-Carlo sampling can be done.
 //! You can use it with the built-in measurement and monte-carlo types
-//! (refer to examples), or you can just use the lattice. 
+//! (refer to examples), or you can just use the lattice.
 
 use ndarray::prelude::*;
 use rand::prelude::SliceRandom;
@@ -305,7 +305,3 @@ mod tests {
         }
     }
 }
-
-
-
-
