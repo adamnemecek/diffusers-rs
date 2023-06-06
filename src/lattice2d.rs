@@ -78,20 +78,20 @@ impl Lattice2d {
         h: f64,
         beta: f64,
     ) -> Self {
-        let nodes: Array2<i32> = Lattice2d::init_spins(&init_type, &dims);
+        let nodes: Array2<i32> = Self::init_spins(&init_type, &dims);
 
         let (width, height) = nodes.dim();
 
-        Lattice2d {
+        Self {
             dims: [width, height],
             n_sites: width as i32 * height as i32,
-            nodes: nodes, // should it be called notes or sites?
-            update_rule: update_rule,
-            spin_type: spin_type,
-            init_type: init_type,
-            j: j,
-            h: h,
-            beta: beta,
+            nodes, // should it be called notes or sites?
+            update_rule,
+            spin_type,
+            init_type,
+            j,
+            h,
+            beta,
         }
     }
 
@@ -102,25 +102,21 @@ impl Lattice2d {
             UpdateRule::Metropolis,
             SpinType::SpinHalf,
             InitType::Random,
-            1.0f64,
-            0.0f64,
-            0.43f64,
+            1.0,
+            0.0,
+            0.43,
         )
     }
 
     /// initiates the sites to some config (often random) as specified by init_type
     fn init_spins(init_type: &InitType, dims: &[usize; 2]) -> Array2<i32> {
-        let nodes: Array2<i32>;
         match init_type {
             InitType::Random => {
                 let mut rng = rand::thread_rng();
-                nodes = Array2::from_shape_fn(*dims, |_| *[-1, 1].choose(&mut rng).unwrap());
+                Array2::from_shape_fn(*dims, |_| *[-1, 1].choose(&mut rng).unwrap())
             }
-            InitType::AllUp => {
-                nodes = Array2::<i32>::ones(*dims);
-            }
+            InitType::AllUp => Array2::<i32>::ones(*dims),
         }
-        return nodes;
     }
 
     /// resets the sites to some config (often random) as specified by init_type
@@ -192,23 +188,19 @@ impl Lattice2d {
     pub fn disp_terminal(&self) {
         let mut string = "----------------\n".to_owned();
         for idx0 in 0..self.dims[0] {
-            string = string + "|";
+            string += "|";
             for idx1 in 0..self.dims[1] {
-                match self.nodes[[idx0, idx1]] {
-                    -1 => {
-                        string = string + " ";
-                    }
-                    1 => {
-                        string = string + "#";
-                    }
+                string += match self.nodes[[idx0, idx1]] {
+                    -1 => " ",
+                    1 => "#",
                     _ => {
                         panic!("Ising lattice is an array of -1s and 1s");
                     }
                 }
             }
-            string = string + "|\n";
+            string += "|\n";
         }
-        string = string + "---------------------";
+        string += "---------------------";
         println!("{}", string);
     }
 }

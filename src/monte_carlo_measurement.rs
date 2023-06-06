@@ -75,7 +75,7 @@ impl MonteCarlo for Lattice2d {
                 energy[i][j] = self.measure_energy();
             }
         }
-        return energy;
+        energy
     }
 
     /// Monte Carlo sample of energy in parallel
@@ -108,7 +108,7 @@ impl MonteCarlo for Lattice2d {
         for thread in fetch_handle.into_iter() {
             energy.push(thread.join().unwrap());
         }
-        return energy;
+        energy
     }
 
     /// Monte Carlo estimate of nearest neighbor correlations
@@ -164,7 +164,7 @@ impl MonteCarlo for Lattice2d {
         for thread in fetch_handle.into_iter() {
             nn_corr.push(thread.join().unwrap());
         }
-        return nn_corr;
+        nn_corr
     }
 
     fn sample_magnetization_parallel(&mut self, params: &MonteCarloParams) -> Vec<Vec<f64>> {
@@ -195,7 +195,7 @@ impl MonteCarlo for Lattice2d {
         for thread in fetch_handle.into_iter() {
             magnetization.push(thread.join().unwrap());
         }
-        return magnetization;
+        magnetization
     }
 
     /// Monte Carlo sample the magnetization

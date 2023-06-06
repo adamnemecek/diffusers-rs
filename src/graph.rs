@@ -70,38 +70,33 @@ impl Graph {
         beta: f64,
     ) -> Self {
         // TODO: implement init for different spin types
-        let nodes: Array1<i32>;
         let mut rng = rand::thread_rng();
-        match init_type {
-            InitType::Random => {
-                nodes = Array::from_iter((0..n_sites).map(|_| *[-1, 1].choose(&mut rng).unwrap()));
-            }
-            InitType::AllUp => {
-                nodes = Array::from_iter((0..n_sites).map(|_| 1));
-            }
+        let nodes = match init_type {
+            InitType::Random => Array::from_iter((0..n_sites).map(|_| *[-1, 1].choose(&mut rng).unwrap())),
+            InitType::AllUp => Array::from_iter((0..n_sites).map(|_| 1))
         }
         // TODO: implement init for different edge types
-        let edges; // : Array2<f64> = Array2<f64>::zeros((n_sites, n_sites));
-        match edge_type {
+        // : Array2<f64> = Array2<f64>::zeros((n_sites, n_sites));
+        let edges = match edge_type {
             EdgeType::BinaryRandom { prob } => {
                 // Probabilistically fill the edge matrix with ones with prob p, and zeros with prob 1-p
-                edges = Array2::from_shape_fn([n_sites as usize , n_sites as usize], |_| -> f64 {if rng.gen::<f64>() < prob {1.0} else {0.0}}); // *[0.0,1.0].choose(&mut rng, prob).unwrap());
+                Ar1ray2::from_shape_fn([n_sites as usize , n_sites as usize], |_| -> f64 {if rng.gen::<f64>() < prob {1.0} else {0.0}}) // *[0.0,1.0].choose(&mut rng, prob).unwrap());
             }
             _ => {
                 panic!("Not yet implemented edge type, try EdgeType::BinaryRandom instead")
             }
         };
-        Graph {
-            n_sites:n_sites,
-            nodes:nodes,
-            edges:edges,
-            update_rule:update_rule,
-            edge_type:edge_type,
-            spin_type:spin_type,
-            init_type:init_type,
-            j:j,
-            h:h,
-            beta:beta,
+        Self {
+            n_sites,
+            nodes,
+            edges,
+            update_rule,
+            edge_type,
+            spin_type,
+            init_type,
+            j,
+            h,
+            beta,
         }
     }
 }

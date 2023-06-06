@@ -83,7 +83,7 @@ impl Measurement for Lattice2d {
         let spin_neighbours_dot = self.get_dot_spin_neighbours() as f64; // J term
                                                                          // Q: should we take precautions in case of overflow errors here
                                                                          // when converting from i32 to f64 ?
-        return -self.j * spin_neighbours_dot - self.h * spin_sum;
+        -self.j * spin_neighbours_dot - self.h * spin_sum
     }
     /// Returns the energy per spin
     fn measure_energy_per_spin(&self) -> f64 {
